@@ -14,7 +14,7 @@ pipeline {
                 }
             }
         }
-        /*stage('Test') {
+        stage('Test') {
             steps {
                 script {
                     def app = docker.image("${env.REPO}:${env.BUILD_ID}")
@@ -43,6 +43,6 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
     }
 }
