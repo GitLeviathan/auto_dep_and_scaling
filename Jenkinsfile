@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REPO = 'your-docker-repo/app'
+        REPO = 'gitleviathan/auto_dep_and_scaling'
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
