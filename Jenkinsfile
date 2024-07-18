@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REPO = 'your-docker-repo/your-app'
+        REPO = 'your-docker-repo/app'
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
