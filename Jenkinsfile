@@ -23,7 +23,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }/*
         stage('Push') {
             steps {
                 script {
@@ -43,6 +43,6 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
 }
