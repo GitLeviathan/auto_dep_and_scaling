@@ -1,43 +1,49 @@
-Создадим систему для автоматизированного развертывания и масштабирования веб-приложения с CI/CD пайплайном, используя Jenkins, Docker и Kubernetes.
+# ТЗ :octocat:
+:octocat:  
+Создать систему для автоматизированного развертывания и масштабирования веб-приложения с CI/CD пайплайном, используя Jenkins, Docker и Kubernetes.
 
-Шаги реализации
-1. Создание простого веб-приложение на Python с использованием Flask
-2. Контейнеризация приложения
-3. Настройка Jenkins
-* Установка и настройка Jenkins
-* Установка необходимых плагинов для работы с Docker и Kubernetes
-* Создание Jenkins Pipeline для автоматизации процессов сборки, тестирования и развертывания Docker-образов
-4. Оркестрация с Kubernetes
-* Настройка Kubernetes кластер
-* Создание манифеста Kubernetes для развертывания веб-приложения
-* Настройка Jenkins для деплоя приложения в Kubernetes кластер
+### Шаги реализации
+1. [Создание простого веб-приложение на Python с использованием Flask](#title1)
+2. [Контейнеризация приложения](#title2)
+3. [Настройка Jenkins](#title3)
+   * Установка и настройка Jenkins
+   * Установка необходимых плагинов для работы с Docker и Kubernetes
+   * Создание Jenkins Pipeline для автоматизации процессов сборки, тестирования и развертывания Docker-образов
+4. [Оркестрация с Kubernetes](#title4)
+   * Настройка Kubernetes кластер
+   * Создание манифеста Kubernetes для развертывания веб-приложения
+   * Настройка Jenkins для деплоя приложения в Kubernetes кластер
 
-Рассмотрим вариант установки на WSL Ubuntu.
+Рассмотрим вариант установки на WSL Ubuntu 22.04.
 
-# Подготовка
+## Подготовка
 
 Если WSL не установлен, пользуемся официальным сайтом microsoft:
 https://learn.microsoft.com/ru-ru/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
 
-Сначала проверяем обновления системы затем устанавливаем Python, pip, flask:
-> sudo apt update
-> sudo apt upgrade
-> sudo apt install python3
-> sudo apt install python3-pip
-> pip install Flask
+Сначала проверяем обновления системы, затем устанавливаем Python, pip, flask:
+``` bash 
+sudo apt update
+sudo apt upgrade
+sudo apt install python3
+sudo apt install python3-pip
+pip install Flask
+```
 
 Нам понадобится Docker, его можно установить с официального сайта, на котором есть инструкция https://docs.docker.com/engine/install/ubuntu/.
 
 Для дальнейшей удобной установки Kubernetes нам понадобится Minikube. Подробная установка minikube есть на их официальном сайте https://www.linuxbuzz.com/install-minikube-on-ubuntu/.
 
-## 1. Создание веб-приложения
+## <a id="title1">1. Создание веб-приложения</a>
 
 Создадим простой проект следующей структуры:
 
-> auto_dep_and_scaling/ \
-│ \
-├── app.py \
+```
+auto_dep_and_scaling/ 
+│ 
+├── app.py 
 └── requirements.txt
+```
 
 Файл app.py содержайщий основной код нашего веб-приложения. Допустим что-то простое, на пример, любимый всеми "Hello world!".
 
@@ -50,7 +56,7 @@ Flask - веб-фреймворк для Python
 Werkzeug - библиотека WSGI для Python, предоставляющая инструменты для создания веб-приложений и их серверной логики  
 Pytest - фреймворк для тестирования на Python
 
-## 2. Контейнеризация приложения
+## <a id="title2">2. Контейнеризация приложения</a>
 
 Обновляем пакеты и устанавливаем необходимые зависимости:
 > sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
@@ -59,10 +65,12 @@ Pytest - фреймворк для тестирования на Python
 > curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
 Добавляем репозиторий Docker в список источников APT:
-> sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
+``` bash
+sudo add-apt-repository 
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu 
+  $(lsb_release -cs) 
+  stable"
+```
 
 Обновляем список пакетов и устанавливаем Docker:
 > sudo apt-get install -y docker-ce
@@ -79,17 +87,20 @@ Pytest - фреймворк для тестирования на Python
 Собираем Docker-образ:
 > docker build -t auto_dep_and_scaling .
 
-## 3. Настройка Jenkins
+## <a id="title3">3. Настройка Jenkins</a>
 
 Сначала устанавливаем Java Development Kit (JDK), который необходим для работы Jenkins:
 > sudo apt install openjdk-17-jdk -y
 
 Добавляем ключ и репозиторий Jenkins:
-> curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
 
-> echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-  https://pkg.jenkins.io/debian binary/ | sudo tee \
+``` bash
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] 
+  https://pkg.jenkins.io/debian binary/ | sudo tee 
   /etc/apt/sources.list.d/jenkins.list > /dev/null
+```
 
 Устанавливаем Jenkins:
 
@@ -128,12 +139,14 @@ sudo apt install jenkins -y
 
 Создаём Jenkinsfile в корневой директории нашего проекта. Этот файл содержит сценарий для Pipeline, который будет использовать Jenkins.
 
-> auto_dep_and_scaling/ \
-│ \
-├── app.py \
-├── requirements.txt \
-├── Dockerfile \
+``` 
+auto_dep_and_scaling/ 
+│ 
+├── app.py 
+├── requirements.txt 
+├── Dockerfile 
 └── Jenkinsfile
+```
 
 Объяснение Pipeline:
 
@@ -141,7 +154,7 @@ sudo apt install jenkins -y
 - agent any: Указывает, что Pipeline может выполняться на любом доступном агенте.
 - environment: Определяет переменные среды, такие как REPO и KUBECONFIG_CREDENTIALS_ID.
 - stages: Содержит несколько стадий, таких как Build, Test, Push и Deploy.
-- Build: Собирает Docker-образ приложения.
+  - Build: Собирает Docker-образ приложения.
   - Test: Запускает тесты внутри контейнера.
   - Push: Отправляет Docker-образ в Docker Hub.
   - Deploy: Применяет Kubernetes манифесты для развертывания приложения.
@@ -152,50 +165,53 @@ sudo apt install jenkins -y
 
 Теперь проект должен иметь вид:
 
-> auto_dep_and_scaling/ \
-│ \
-├── app.py \
-├── requirements.txt \
-├── Dockerfile \
-├── Jenkinsfile \
-└── tests/ \
-    ├── __init__.py \
+``` 
+auto_dep_and_scaling/ 
+│ 
+├── app.py 
+├── requirements.txt 
+├── Dockerfile 
+├── Jenkinsfile 
+└── tests/ 
+    ├── __init__.py 
     └── test_app.py
+```
 
-## 4. Оркестрация с Kubernetes
+## <a id="title4">4. Оркестрация с Kubernetes</a>
 
-Создаём директорию для k8s:
-Создаём deployment.yaml:
+Создаём директорию для k8s с двумя файлами:
+
+Создаём `deployment.yaml`:
 - replicas: Определяет количество реплик (экземпляров) приложения, которые будут работать одновременно.
 - selector: Определяет, какие Pods будут управляться этим Deployment.
 - template: Определяет шаблон для создания Pods, включая контейнер и его конфигурацию.
 
-Создаём service.yaml:
+Создаём `service.yaml`:
 - selector: Определяет, какие Pods будут обслуживаться этим Service.
 - ports: Определяет порты, на которых Service будет доступен (порт 80 для внешнего трафика, перенаправляемый на порт 5000 контейнера).
 - type: LoadBalancer: Создает внешний балансировщик нагрузки (это может потребовать дополнительных настроек, если вы не используем облачный провайдер).
 
 После этого директория должна выглядеть следующим образом:
-> auto_dep_and_scaling/ \
-│ \
-├── app.py \
-├── requirements.txt \
-├── Dockerfile \
-├── Jenkinsfile \
-├── tests/ \
-│   ├── __init__.py \
-│   └── test_app.py \
-└── k8s/ \
-    ├── deployment.yaml \
+```
+auto_dep_and_scaling/ 
+│ 
+├── app.py 
+├── requirements.txt 
+├── Dockerfile 
+├── Jenkinsfile 
+├── tests/ 
+│   ├── __init__.py 
+│   └── test_app.py 
+└── k8s/ 
+    ├── deployment.yaml 
     └── service.yaml
+```
 
-Заходим в "Настроить Jenkins" > "Credentials".
-Переходим в "Manage Jenkins".
-Добавление нового Kubernetes Config Credentials.
-
-В Manage Credentials выбираем область (например, global или system), где вы хотите добавить Credentials.
-В поле Kind выбираем Secret file.
-В поле ID вводим kubeconfig. Это идентификатор, который мы будем использовать в Jenkinsfile для ссылки на эти credentials.
+Заходим в "Настроить Jenkins" > "Credentials".  
+Переходим в "Manage Jenkins".  
+В Manage Credentials выбираем область (например, global или system), где вы хотите добавить Credentials.  
+В поле Kind выбираем Secret file.  
+В поле ID вводим kubeconfig. Это идентификатор, который мы будем использовать в Jenkinsfile для ссылки на эти credentials.  
 В поле File нажимаем кнопку Choose File и выбираем файл kubeconfig/config. По умолчанию он лежит в ~/.kube/config. Если в дальнейшем снова делать чистый запуск, то нужно будет обновлять config файл.
 
 Теперь настроим Jenkins для развертывания приложения в Kubernetes кластер. Добавляем Kubernetes Credentials в Jenkins.
