@@ -45,7 +45,7 @@ https://learn.microsoft.com/ru-ru/windows/wsl/install-manual#step-4---download-t
 
 > pip install -r requirements.txt
 
-Нам для корректной работы понадобятся сдежующие зависимости:  
+Нам для корректной работы понадобятся сдеюующие зависимости:  
 Flask - веб-фреймворк для Python  
 Werkzeug - библиотека WSGI для Python, предоставляющая инструменты для создания веб-приложений и их серверной логики  
 Pytest - фреймворк для тестирования на Python
@@ -106,6 +106,14 @@ sudo apt install jenkins -y
 - Kubernetes Plugin
 - Pipeline: REST API Plugin
 
+Заходим в "Настроить Kenkins" > "System" > "Registry credentials".
+Создаём новый Credentials:
+- Kid: Username with password
+- Scope: Global/System в зависимости от того, что необходимо
+- Username/Password: Указываем учетные данные для доступа к репозиторию
+- ID: Можно оставить пустым, это внутренний уникальный идентификатор, по которому эти учетные данные идентифицируются из заданий и другой конфигурации. Подробности есть во внутренней подсказке Jenkins
+- Description: По желанию
+
 Создадим Jenkins Pipeline для автоматизации процессов сборки, тестирования и развертывания Docker-образов.
 
 Переходим в "Создать Item" и создаём новый Pipeline.
@@ -117,6 +125,7 @@ sudo apt install jenkins -y
 - SCM: Git
 - Repository URL: URL вашего репозитория
 - Credentials: Указываем учетные данные для доступа к репозиторию  
+- ID: Оставляем пустым, 
 Остальное заполняем по необходимости
 
 Создаём Jenkinsfile в корневой директории нашего проекта. Этот файл содержит сценарий для Pipeline, который будет использовать Jenkins.
@@ -189,7 +198,7 @@ sudo apt install jenkins -y
 В Manage Credentials выбераем область (например, global или system), где вы хотите добавить Credentials.
 В поле Kind выбераем Secret file.
 В поле ID вводим kubeconfig. Это идентификатор, который мы будем использовать в Jenkinsfile для ссылки на эти креденшелы.
-В поле File нажимаем кнопку Choose File и выбераем файл kubeconfig. По умолчанию он лежит в ~/.kube/config.
+В поле File нажимаем кнопку Choose File и выбераем файл kubeconfig/config. По умолчанию он лежит в ~/.kube/config. Если в дальнейшем снова делать чистый запуск, то нужно будет обновлять config файл.
 
 Теперь настроим Jenkins для развертывания приложения в Kubernetes кластер. Добавляем Kubernetes Credentials в Jenkins.
 
@@ -202,3 +211,5 @@ sudo apt install jenkins -y
 - withCredentials: Загружает файл конфигурации Kubernetes из Jenkins.
 - sh 'kubectl apply -f k8s/deployment.yaml': Применяет манифест Deployment для развертывания приложения.
 - sh 'kubectl apply -f k8s/service.yaml': Применяет манифест Service для обеспечения доступа к приложению.
+
+![alt text](image.png)
