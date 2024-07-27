@@ -27,7 +27,7 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', '8e115b085e2a42258ccca3219c7b315a') {
+                    docker.withRegistry('https://index.docker.io/v1/', '1fb1b907-e449-47db-8925-74be480de4ae') {
                         def app = docker.image("${env.REPO}:${env.BUILD_ID}")
                         app.push()
                     }
