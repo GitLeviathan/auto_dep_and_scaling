@@ -182,31 +182,23 @@ sudo apt install jenkins -y
     ├── deployment.yaml \
     └── service.yaml
 
-Заходим в "Настроить Jenkins" > "Credentials"
+Заходим в "Настроить Jenkins" > "Credentials".
+Переходим в "Manage Jenkins".
+Добавление нового Kubernetes Config Credentials.
 
-Войдите в вашу Jenkins инстанцию.
-Перейдите в Manage Jenkins (Управление Jenkins).
-Выберите Manage Credentials (Управление креденшелами).
-Добавление нового Kubernetes Config Credentials
-
-В Manage Credentials выберите область (например, global или system), где вы хотите добавить креденшелы.
-Нажмите Add Credentials (Добавить креденшелы) в правом меню.
-В поле Kind выберите Secret file из выпадающего списка.
-В поле ID введите kubeconfig. Это идентификатор, который мы будем использовать в Jenkinsfile для ссылки на эти креденшелы.
-В поле File нажмите кнопку Choose File и выберите файл kubeconfig с вашего компьютера.
-Введите описание (например, Kubernetes cluster config) в поле Description.
-Нажмите OK для сохранения настроек.
+В Manage Credentials выбераем область (например, global или system), где вы хотите добавить Credentials.
+В поле Kind выбераем Secret file.
+В поле ID вводим kubeconfig. Это идентификатор, который мы будем использовать в Jenkinsfile для ссылки на эти креденшелы.
+В поле File нажимаем кнопку Choose File и выбераем файл kubeconfig. По умолчанию он лежит в ~/.kube/config.
 
 Теперь настроим Jenkins для развертывания приложения в Kubernetes кластер. Добавляем Kubernetes Credentials в Jenkins.
 
-Переходим в Manage Jenkins > Manage Credentials.
-Добавляем новый Kubeconfig credentials:
+Переходим в Manage Jenkins > Manage Credentials. Добавляем новый Kubeconfig credentials:
 - Kind: Kubernetes Config
 - ID: kubeconfig
 - File: Выбераем файл kubeconfig (файл конфигурации Kubernetes, который мы можем получить после создания кластера).
 
 Объяснение шагов в Deploy стадии:
-
 - withCredentials: Загружает файл конфигурации Kubernetes из Jenkins.
 - sh 'kubectl apply -f k8s/deployment.yaml': Применяет манифест Deployment для развертывания приложения.
 - sh 'kubectl apply -f k8s/service.yaml': Применяет манифест Service для обеспечения доступа к приложению.
