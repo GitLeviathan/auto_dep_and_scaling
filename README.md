@@ -21,7 +21,7 @@
 Если WSL не установлен, пользуемся официальным сайтом microsoft:
 https://learn.microsoft.com/ru-ru/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
 
-Сначала проверяем обновления системы, затем устанавливаем Python, pip, flask:
+Сначала обновляем список пакетов и список установленных пакетов, затем устанавливаем Python, pip и flask:
 ``` bash 
 sudo apt update
 sudo apt upgrade
